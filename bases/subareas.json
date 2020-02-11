@@ -1,0 +1,17 @@
+[
+    {
+      "ID": 1,
+      "AREA": "ENTRENAMIENTO",
+      "SUBAREA": "RECURSOS Y SOLUCIONES"
+    },
+    {
+      "ID": 2,
+      "AREA": "ENTRENAMIENTO",
+      "SUBAREA": "CAPACITACIONES"
+    },
+    {
+      "ID": 3,
+      "AREA": "ENTRENAMIENTO",
+      "SUBAREA": "BASE DE CONOCIMIENTO"
+    }
+  ]

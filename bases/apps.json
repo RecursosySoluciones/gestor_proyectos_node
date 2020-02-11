@@ -1,0 +1,46 @@
+[
+    {
+      "ID": 1,
+      "APLICACION": "VENTAS"
+    },
+    {
+      "ID": 2,
+      "APLICACION": "CONTENCION HOGAR"
+    },
+    {
+      "ID": 3,
+      "APLICACION": "CONTENCION MOVIL"
+    },
+    {
+      "ID": 4,
+      "APLICACION": "RECUPERO HOGAR"
+    },
+    {
+      "ID": 5,
+      "APLICACION": "FRONT HOGAR"
+    },
+    {
+      "ID": 6,
+      "APLICACION": "SUCURSALES"
+    },
+    {
+      "ID": 7,
+      "APLICACION": "ROAMING"
+    },
+    {
+      "ID": 8,
+      "APLICACION": "TABULACIONES"
+    },
+    {
+      "ID": 9,
+      "APLICACION": "COMUNICADOS"
+    },
+    {
+      "ID": 10,
+      "APLICACION": "EQUIPOS"
+    },
+    {
+      "ID": 11,
+      "APLICACION": "PLANES"
+    }
+  ]

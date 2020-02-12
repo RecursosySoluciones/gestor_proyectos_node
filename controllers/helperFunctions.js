@@ -55,6 +55,41 @@ let db = {
                 resolve(e);
             });
         })
+    },
+    update_on: async function(table,value,where){
+        let sql = "UPDATE "+ table;
+        let set = " SET ";
+        let whe = " WHERE ";
+        let k = 1;
+        let i = 1;
+        set_length = helper.object_size(value);
+        whe_length = helper.object_size(where);
+        for(key in value){
+            if(i < set_length){
+                set += typeof(value[key]) == 'string' ? key + " = '" + value[key] + "'," : key + " = " + value[key] + ",";
+            }else if(i == set_length){
+                set += typeof(value[key]) == 'string' ? key + " = '" + value[key] + "'": key + " = " + value[key];
+            }
+            i++
+        }
+
+        for(key in where){
+            if(k < whe_length){
+                whe += typeof(where[key]) == 'string' ? key + " = '" + where[key] + "' AND " : key + " = " + where[key] + " AND ";
+            }else if(k == whe_length){
+                whe += typeof(where[key]) == 'string' ? key + " = '" + where[key] + "'" : key + " = " + where[key] + ";";
+            }
+            k++
+        }
+        sql += set + whe;
+        return new Promise((resolve,reject) => {
+            this.queryAsync(sql).then((rta) => {
+                resolve(rta);
+            }).catch((err) => {
+                reject(err);
+            })
+        });
+
     }
 };
 
@@ -73,6 +108,11 @@ let helper = {
                 exp     = new RegExp(regEx);
                 return exp.test(value);
             break;
+            case 3:
+                regEx   = /^([A-Za-z0-9\.\_\-]{1,20})+@+([a-z]{1,15})+(\.[a-z]{1,4})+(\.[a-z]{1,3})?$/;
+                exp     = new RegExp(regEx);
+                return exp.test(value);
+            break; 
         }
     },
     object_size: function(obj){
@@ -91,21 +131,25 @@ let helper = {
             subarea: "",
             level: ""
         };
-        area_base.forEach(element => {
-            if(element.ID == area_id){
-                data.area = element.AREA;
-            }
-        });
-        subarea_base.forEach(element => {
-            if(element.ID == subarea_id && element.AREA == data.area){
-                data.subarea = element.SUBAREA;
-            }
-        });
-        levels_base.forEach(element => {
-            if(element.ID == level_id){
-                data.level = element.NOMBRE;
-            }
-        });
+        if(area_id > 0 && subarea_id > 0){
+            area_base.forEach(element => {
+                if(element.ID == area_id){
+                    data.area = element.AREA;
+                }
+            });
+            subarea_base.forEach(element => {
+                if(element.ID == subarea_id && element.AREA == data.area){
+                    data.subarea = element.SUBAREA;
+                }
+            });
+        }
+        if(level_id > 0){
+            levels_base.forEach(element => {
+                if(element.ID == level_id){
+                    data.level = element.NOMBRE;
+                }
+            });
+        }
         return data;
 
     },
@@ -131,7 +175,7 @@ let helper = {
                     subarea_name: area_level_names.subarea
                 },
                 imagen: data.imagen, 
-                active_user: data.active_user == 1 ? 'Usuario Acctivo' : 'Usuario Inactivo',
+                active_user: data.active_user == 1 ? 'Usuario Activo' : 'Usuario Inactivo',
                 dates: {
                     created: data.created_at,
                     lastUpdate: data.updated_at

@@ -9,9 +9,13 @@ let migration = async () => {
         }
     });
     let pass = password_hash.generate('Noviembre2019');
+    db.db.queryAsync("SELECT * FROM users WHERE legajo = 'rysteco'").then((rta) =>{
+        if(rta.length == 0){
+            let sql1 = "INSERT INTO users (name,lastName,legajo,telefono,mail,password,nivel,area,subarea) VALUES ('RyS','Telecom Argentina','rysteco',0,'recursosysoluciones@teco.com.ar','"+pass+"',1,1,1);";
+            db.db.query(sql1,(err, res) => {});
+        }
+    })
 
-    let sql1 = "INSERT INTO users (name,lastName,legajo,telefono,mail,password,nivel,area,subarea) VALUES ('RyS','Telecom Argentina','rysteco',0,'recursosysoluciones@teco.com.ar','"+pass+"',1,1,1);";
-    db.db.query(sql1,(err, res) => {});
 
 }
 

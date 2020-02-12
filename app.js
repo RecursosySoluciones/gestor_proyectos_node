@@ -2,10 +2,11 @@ const express       = require('express');
 const bodyParser    = require('body-parser');
 const migrations    = require('./database/migrations/migrations');
 
-var app = express();
+let app = express();
 
 // Routes files
-var user_routes = require('./routes/users');
+let user_routes              = require('./routes/users');
+let frontUtilities_routes    = require('./routes/frontUtilities');
 
 
 // Middlewares
@@ -16,6 +17,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/api/users', user_routes);
+app.use('/api/frontUtilities', frontUtilities_routes);
 
 migrations();
 

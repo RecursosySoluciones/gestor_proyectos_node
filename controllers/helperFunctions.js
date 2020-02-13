@@ -223,6 +223,50 @@ let helper = {
                 }
             })
         })
+    },
+    deletePicturesNotUsed: function(type){
+        switch(type) {
+            case 'profile':
+                // funcion que elimina las imagenes que no estan linkeadas, osea son viejas
+                let profileImgs = fs.readdirSync('public/imgs');
+                db.db.queryAsync("SELECT imagen FROM users").then((element) => {
+                    element.forEach((el) => {
+                        if(el.imagen != "" && el.imagen != null){
+                            imagen_db = (el.imagen.split('/'))[2];
+                            profileImgs.forEach((elem) => {
+                                if(elem != imagen_db){
+                                    fs.unlink('public/imgs/' + elem,(err) => {
+                                        if(err){
+                                            throw err;
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+                });
+            break;
+            default:
+                console.log('Valor invalido en funcion de deletePicturesNotUsed');
+            break;
+        }
+
+    },
+    getStatusTicketName: function(id_status){
+        let ticket_status = JSON.parse(fs.readFileSync("./bases/estado_tickets.json"));
+        let returnData = {
+            id: "",
+            estado: ""
+        }
+        ticket_status.forEach((element) => {
+            if(element.ID == id_status){
+                returnData = {
+                    id: element.ID,
+                    estado: element.ESTADO
+                }
+            }
+        });
+        return returnData;
     }
 } 
 

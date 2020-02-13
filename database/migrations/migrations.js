@@ -1,7 +1,9 @@
-const migration1 = require('./user_table');
+const users_table = require('./user_table');
+const tickets_table = require('./tickets_table');
 
 let migrations = () => {
-    migration1();
+    users_table();
+    tickets_table();
 };
 
 module.exports = migrations;

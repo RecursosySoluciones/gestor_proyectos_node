@@ -1,12 +1,17 @@
 const express       = require('express');
 const controller    = require('../controllers/users');
+const multipart     = require('connect-multiparty');
+let multipartMiddleware = multipart({
+    uploadDir: './public/imgs'
+});
 
 var router = express.Router();
 
-router.get('/:id', controller.get);
-router.post('/new',controller.new);
-router.delete('/:id',controller.delete);
-router.put('/:id',controller.update);
+router.post('/new',multipartMiddleware,controller.new);
+router.route("/:id")
+            .get(controller.get)
+            .delete(controller.delete)
+            .put(multipartMiddleware, controller.update);
 router.post('/login',controller.login);
 
 module.exports = router;

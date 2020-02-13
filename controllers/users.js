@@ -1,5 +1,8 @@
-const helper    = require('./helperFunctions');
+const helper        = require('./helperFunctions');
 const password_hash = require('password-hash');
+const fs            = require('fs');
+var base_url        = (JSON.parse(fs.readFileSync("config.json"))).base_url;
+
 
 let controller = {
     get: function(req, res) {
@@ -52,6 +55,18 @@ let controller = {
                 if(q.length != 0){
                     return helper.helper.errorMsg(res, 'Error al crear el usuario. ERR_01');
                 }
+                if(req.files.image != undefined){
+                    image = req.files.image;
+                    if(image.type != 'image/jpeg' && image.type != 'image/jpg' && image.type != 'image/png'){
+                        return helper.helper.errorMsg(res, 'Error en la carga de imagen. ERR_S01');
+                    }
+                    if(image.size > 1048576){
+                        return helper.helper.errorMsg(res, 'Error en la carga de imagen, la imagen debe pesar menos de 1MB. ERR_S02');
+                    }
+                    // obtenemos la url 
+                    var img_url = image.path.split("\\");
+                    img_url = base_url + "imgs/" +img_url[2];
+                }
                 // consultamos si el nivel, area y subarea existe en la base de datos
                 let nivel            = parseInt(data.nivel);
                 let area             = parseInt(data.area);
@@ -76,9 +91,10 @@ let controller = {
                     nivel: nivel,
                     area: area,
                     subarea: subarea,
-                    imagen: ""
+                    imagen: img_url != undefined ? img_url : ""
                 };
                 helper.db.insert_on('users',insertData).then((n) => {
+                    helper.helper.deletePicturesNotUsed('profile');
                     return helper.helper.jsonReturn(res, {
                         msg: "Usuario creado exitosamente",
                         id: n.insertId,
@@ -125,6 +141,18 @@ let controller = {
                     }else{
                         return helper.helper.errorMsg(res, "Error de datos enviados. ERR_04");
                     }
+                }
+                if(req.files.image != undefined){
+                    image = req.files.image;
+                    if(image.type != 'image/jpeg' && image.type != 'image/jpg' && image.type != 'image/png'){
+                        return helper.helper.errorMsg(res, 'Error en la carga de imagen. ERR_S01');
+                    }
+                    if(image.size > 1048576){
+                        return helper.helper.errorMsg(res, 'Error en la carga de imagen, la imagen debe pesar menos de 1MB. ERR_S02');
+                    }
+                    // obtenemos la url 
+                    var img_url = image.path.split("\\");
+                    dataUpdate.imagen = base_url + "imgs/" +img_url[2];
                 }
                 if(form.lastName != undefined){
                     if(helper.helper.regExCheck(form.lastName,2)){
@@ -176,6 +204,7 @@ let controller = {
                 }
                 helper.db.update_on('users',dataUpdate,{id: id}).then((rta) => {
                     if(rta.affectedRows > 0){
+                        helper.helper.deletePicturesNotUsed('profile');
                         return helper.helper.jsonReturn(res,{
                             msg: "Usuario modificado exitosamente"
                         });

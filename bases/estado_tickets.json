@@ -1,0 +1,30 @@
+[
+    {
+      "ID": 1,
+      "ESTADO": "PENDIENTE REVISION"
+    },
+    {
+      "ID": 2,
+      "ESTADO": "ASIGNADO"
+    },
+    {
+      "ID": 3,
+      "ESTADO": "EN PROCESO"
+    },
+    {
+      "ID": 4,
+      "ESTADO": "EN TESTING"
+    },
+    {
+      "ID": 5,
+      "ESTADO": "FINALIZADO"
+    },
+    {
+      "ID": 6,
+      "ESTADO": "CERRADO"
+    },
+    {
+      "ID": 7,
+      "ESTADO": "RECHAZADO"
+    }
+  ]

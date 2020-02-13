@@ -48,6 +48,30 @@ let controller = {
             dataReturn.push(data);
         });
         helper.helper.jsonReturn(res,dataReturn);
+    },
+    apps: function(req, res){
+        let base = JSON.parse(fs.readFileSync("./bases/apps.json"));
+        let dataReturn = [];
+        base.forEach((element) => {
+            let data = {
+                id: element.ID,
+                nivel: element.APLICACION
+            }
+            dataReturn.push(data);
+        });
+        helper.helper.jsonReturn(res,dataReturn);
+    },
+    tStatus: function(req, res){
+        let base = JSON.parse(fs.readFileSync("./bases/estado_tickets.json"));
+        let dataReturn = [];
+        base.forEach((element) => {
+            let data = {
+                id: element.ID,
+                estado: element.ESTADO
+            }
+            dataReturn.push(data);
+        });
+        return helper.helper.jsonReturn(res,dataReturn);
     }
 }
 

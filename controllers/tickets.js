@@ -49,7 +49,7 @@ let controller = {
             // generamos la vista segun el nivel de usuario
             let id          = req.params.id;
             if(id == "all"){
-                helper.helper.createTicketsList(1).then((data) => {
+                helper.helper.createTicketsList(req).then((data) => {
                     return helper.helper.jsonReturn(res,data,"Listado de todos los tickets");
                 }).catch((err) => {helper.helper.errorMsg(res,err)});
             }else if(helper.helper.regExCheck(id,1)){

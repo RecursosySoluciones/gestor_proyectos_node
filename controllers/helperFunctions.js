@@ -345,132 +345,71 @@ let helper = {
     createTicketsList: async function(request){
         // Devolveremos segun el nivel
         let filtrosRequest  = request.query
-        let ticketsReturn   = [];
         let appName         = "";
         let tStatus         = "";
-        let Areas           = "";
-        let print           = true;
-        let contador        = 0;
         return new Promise ((resolve,reject) => {
             // Chequeamos si se aplicaron filtros
-            // filtros = {
-            //     fechaFrom: !filtrosRequest.fecha_from ? "" : filtrosRequest.fecha_from,
-            //     fechaTo: !filtrosRequest.fecha_to ? "" : filtrosRequest.fecha_to,
-            //     legajo: !filtrosRequest.legajo ? "" : filtrosRequest.legajo,
-            //     estado: !filtrosRequest.estado ? "" : parseInt(filtrosRequest.estado),
-            //     app: !filtrosRequest.app ? "" : parseInt(filtrosRequest.app)
-            // }
-
-            // db.queryAsync("SELECT * FROM tickets").then((element) => {
-            //     for(i = 0; i < element.length; i++ ){
-            //         elementForeach = element[i];
-            //         fechaCreacion = elementForeach.created_at.toLocaleDateString();
-            //         print = true;
-            //         if(filtros.app != "" && filtros.app != elementForeach.app && print == true){
-            //             print = false;
-            //         }
-            //         if(filtros.estado != "" && filtros.estado != elementForeach.estado && print == true){
-            //             print = false;
-            //         }
-            //         if(filtros.legajo != "" && filtros.legajo != elementForeach.legajo && print == true){
-            //             print = false;
-            //         }
-            //         if(filtros.fechaFrom != "" && filtros.fechaFrom > fechaCreacion && print == true){
-            //             print = false;
-            //         }
-            //         if(filtros.fechaTo != "" && filtros.fechaTo < fechaCreacion && print == true){
-            //             print = false;
-            //         }
-            //         // imprime el registro
-            //         appName = helper.getAppName(elementForeach.app);
-            //         tStatus = helper.getStatusTicketName(elementForeach.estado);
-            //         db.queryAsync("SELECT * FROM users WHERE id = "+elementForeach.id_user).then((data2) => {
-            //             Areas = helper.getAreaName(data2[0].area,data2[0].subarea,0);
-            //             dataReturn = {
-            //                 id: elementForeach.id,
-            //                 asunto: elementForeach.asunto,
-            //                 app: {
-            //                     id: elementForeach.app,
-            //                     name: appName.app
-            //                 },
-            //                 uCreador: {
-            //                     id: elementForeach.id_user,
-            //                     name: data2[0].name,
-            //                     lastName: data2[0].lastName,
-            //                     area: Areas.area,
-            //                     subarea: Areas.subarea,
-            //                     legajo: elementForeach.uCreador
-            //                 },
-            //                 imagen: elementForeach.imagen,
-            //                 descripcion: elementForeach.descripcion,
-            //                 estado: {
-            //                     id: elementForeach.estado,
-            //                     estado: tStatus.estado
-            //                 },
-            //                 dates: {
-            //                     creacion: elementForeach.created_at,
-            //                     ultimaActualizacion: elementForeach.update_at
-            //                 }
-            //             }
-            //             if(print){
-            //                 ticketsReturn.push(dataReturn);
-            //             }
-                        
-            //             if((i+1) == element.length){
-            //                 return resolve(ticketsReturn);
-            //             }
-                           
-            //         }).catch((err) => reject(err));
-
-            //     }
-            // }).catch((err) => {return reject("Error interno createTicketsList. ERR_01 || " + err)})
-
-
+            filtros = {
+                fechaFrom: !filtrosRequest.fecha_from ? "" : filtrosRequest.fecha_from,
+                fechaTo: !filtrosRequest.fecha_to ? "" : filtrosRequest.fecha_to,
+                legajo: !filtrosRequest.legajo ? "" : filtrosRequest.legajo,
+                estado: !filtrosRequest.estado ? "" : parseInt(filtrosRequest.estado),
+                app: !filtrosRequest.app ? "" : parseInt(filtrosRequest.app)
+            }
 
             db.queryAsync("SELECT * FROM tickets").then((element) => {
-                element.forEach((elementForeach) => {
+                mainReturn = element.map((elementForeach) => {
                     appName = helper.getAppName(elementForeach.app);
                     tStatus = helper.getStatusTicketName(elementForeach.estado);
-                    db.queryAsync("SELECT * FROM users WHERE id = "+elementForeach.id_user).then((data2) => {
-                        Areas = helper.getAreaName(data2[0].area,data2[0].subarea,0);
-                        dataReturn = {
-                            id: elementForeach.id,
-                            asunto: elementForeach.asunto,
-                            app: {
-                                id: elementForeach.app,
-                                name: appName.app
-                            },
-                            uCreador: {
-                                id: elementForeach.id_user,
-                                name: data2[0].name,
-                                lastName: data2[0].lastName,
-                                area: Areas.area,
-                                subarea: Areas.subarea,
-                                legajo: elementForeach.uCreador
-                            },
-                            imagen: elementForeach.imagen,
-                            descripcion: elementForeach.descripcion,
-                            estado: {
-                                id: elementForeach.estado,
-                                estado: tStatus.estado
-                            },
-                            dates: {
-                                creacion: elementForeach.created_at,
-                                ultimaActualizacion: elementForeach.update_at
-                            }
+                    dataReturn = {
+                        id: elementForeach.id,
+                        asunto: elementForeach.asunto,
+                        app: {
+                            id: elementForeach.app,
+                            name: appName.app
+                        },
+                        uCreador: {
+                            id: elementForeach.id_user,
+                            legajo: elementForeach.uCreador
+                        },
+                        imagen: elementForeach.imagen,
+                        descripcion: elementForeach.descripcion,
+                        estado: {
+                            id: elementForeach.estado,
+                            estado: tStatus.estado
+                        },
+                        dates: {
+                            creacion: elementForeach.created_at,
+                            ultimaActualizacion: elementForeach.update_at
                         }
-                        ticketsReturn.push(dataReturn);
-                        contador++;
-                        if(element.length == contador){
-                            return resolve(ticketsReturn);
-                        }
-                     
-                    }).catch((err) => reject(err));
+                    }
+                    return dataReturn;
                 });
-             
-            }).catch((err) => {return reject("Error interno createTicketsList. ERR_01 || " + err)})
-        });
 
+                return resolve(mainReturn.filter((currentValue) => {
+                    createDate = currentValue.dates.creacion.toLocaleDateString();
+
+                    if(filtros.fechaFrom != "" && createDate < filtros.fechaFrom){
+                        return false;
+                    }
+                    if(filtros.fechaTo != "" && createDate > filtros.fechaTo){
+                        return false;
+                    }
+                    if(filtros.legajo != "" && currentValue.uCreador.legajo != filtros.legajo){
+                        return false;
+                    }
+                    if(filtros.estado != "" && currentValue.estado.id != filtros.estado){
+                        return false;
+                    }
+                    if(filtros.app != "" && currentValue.app.id != filtros.app){
+                        return false;
+                    }
+                    return true;
+
+                }))
+
+            }).catch((err) => {return reject(err)});
+        })
     }
 } 
 

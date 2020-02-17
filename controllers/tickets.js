@@ -50,7 +50,11 @@ let controller = {
             let id          = req.params.id;
             if(id == "all"){
                 helper.helper.createTicketsList(req).then((data) => {
-                    return helper.helper.jsonReturn(res,data,"Listado de todos los tickets");
+                    if(data.length == 0){
+                        return helper.helper.jsonReturn(res,data,"No existen tickets con los filtros asignados");
+                    }else{
+                        return helper.helper.jsonReturn(res,data,"Listado de todos los tickets");
+                    }
                 }).catch((err) => {helper.helper.errorMsg(res,err)});
             }else if(helper.helper.regExCheck(id,1)){
                 helper.helper.createTicketReturn(id).then((data2) => {

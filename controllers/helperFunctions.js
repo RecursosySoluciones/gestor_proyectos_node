@@ -1,5 +1,5 @@
-const mysql = require('mysql');
-const fs    = require('fs');
+const mysql         = require('mysql');
+const fs            = require('fs');
 const password_hash = require('password-hash');
 
 
@@ -187,12 +187,19 @@ let helper = {
     },
     errorMsg: function(res,msg = ""){
         return res.status(200).send({
-            error: true,
-            msg: msg
+            Success: false,
+            Message: msg,
+            Data: [],
+            HttpCodeResponse: 200
         });
     },
-    jsonReturn: function(res, object){
-        return res.status(200).json(object);
+    jsonReturn: function(res, object, message = ""){
+        return res.status(200).json({
+            Success: true,
+            Message: message,
+            Data: object,
+            HttpCodeResponse: 200
+        });
     },
     checkAuth: async function(res,level){
         let auth = res.headers.authorization;
@@ -267,6 +274,181 @@ let helper = {
             }
         });
         return returnData;
+    },
+    getAppName: function(appId){
+        let id = parseInt(appId);
+        let apps = JSON.parse(fs.readFileSync("./bases/apps.json"));
+        let returnData = {
+            id: id,
+            app: ""
+        }
+        apps.forEach((element) => {
+            if(element.ID == id){
+                returnData = {
+                    id: element.ID,
+                    app: element.APLICACION
+                }
+            }
+        });
+        return returnData;
+    },
+    createTicketReturn: function(idTicket){
+        let id = parseInt(idTicket);
+        return new Promise((resolve,reject) => {
+        db.queryAsync("SELECT * FROM tickets WHERE id = "+id+" LIMIT 1").then((data) => {
+            if(data.length == 0){
+                reject("Error interno en createTicketReturn");
+            }
+            let appName = helper.getAppName(data[0].app);
+            let tStatus = helper.getStatusTicketName(data[0].estado);
+            dataReturn = {
+                id: data[0].id,
+                asunto: data[0].asunto,
+                app: {
+                    id: data[0].app,
+                    name: appName.app
+                },
+                uCreador: {
+                    id: data[0].id_user,
+                    name: "",
+                    lastName: "",
+                    area: "",
+                    subarea: "",
+                    legajo: data[0].uCreador
+                },
+                imagen: data[0].imagen,
+                descripcion: data[0].descripcion,
+                estado: {
+                    id: data[0].estado,
+                    estado: tStatus.estado
+                },
+                dates: {
+                    creacion: data[0].created_at,
+                    ultimaActualizacion: data[0].update_at
+                }
+            }
+                db.queryAsync("SELECT * FROM users WHERE id = "+dataReturn.uCreador.id+ " LIMIT 1").then((data2) => {
+                    if(data2.length == 0){
+                        reject("Error interno en createTicketReturn");
+                    }
+                    let Areas = helper.getAreaName(data2[0].area,data2[0].subarea,0);
+                    dataReturn.uCreador.name = data2[0].name;
+                    dataReturn.uCreador.lastName = data2[0].lastName;
+                    dataReturn.uCreador.area = Areas.area;
+                    dataReturn.uCreador.subarea = Areas.subarea;
+
+                    resolve(dataReturn);
+                });
+            })
+        }).catch((err) => {console.log(err)});
+    },
+    createTicketsList: async function(nivel){
+        // Devolveremos segun el nivel
+        let ticketsReturn   = [];
+        let appName         = "";
+        let tStatus         = "";
+        let Areas           = "";
+        let contador        = 0;
+        return new Promise ((resolve,reject) => {
+            switch(nivel){
+                case 1:
+
+                    db.queryAsync("SELECT * FROM tickets").then((element) => {
+                        element.forEach((elementForeach) => {
+                            appName = helper.getAppName(elementForeach.app);
+                            tStatus = helper.getStatusTicketName(elementForeach.estado);
+                            db.queryAsync("SELECT * FROM users WHERE id = "+elementForeach.id_user).then((data2) => {
+                                Areas = helper.getAreaName(data2[0].area,data2[0].subarea,0);
+                                dataReturn = {
+                                    id: elementForeach.id,
+                                    asunto: elementForeach.asunto,
+                                    app: {
+                                        id: elementForeach.app,
+                                        name: appName.app
+                                    },
+                                    uCreador: {
+                                        id: elementForeach.id_user,
+                                        name: data2[0].name,
+                                        lastName: data2[0].lastName,
+                                        area: Areas.area,
+                                        subarea: Areas.subarea,
+                                        legajo: elementForeach.uCreador
+                                    },
+                                    imagen: elementForeach.imagen,
+                                    descripcion: elementForeach.descripcion,
+                                    estado: {
+                                        id: elementForeach.estado,
+                                        estado: tStatus.estado
+                                    },
+                                    dates: {
+                                        creacion: elementForeach.created_at,
+                                        ultimaActualizacion: elementForeach.update_at
+                                    }
+                                }
+                                ticketsReturn.push(dataReturn);
+                                contador++;
+                                if(element.length == contador){
+                                    return resolve(ticketsReturn);
+                                }
+                                
+                            }).catch((err) => reject(err));
+                            
+
+                        });
+                        
+                    }).catch((err) => {return reject("Error interno createTicketsList. ERR_01 || " + err)})
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                    db.queryAsync("SELECT * FROM tickets").then((element) => {
+                        element.forEach((elementForeach) => {
+                            appName = helper.getAppName(elementForeach.app);
+                            tStatus = helper.getStatusTicketName(elementForeach.estado);
+                            db.queryAsync("SELECT * FROM users WHERE id = "+elementForeach.id_user).then((data2) => {
+                                Areas = helper.getAreaName(data2[0].area,data2[0].subarea,0);
+                                dataReturn = {
+                                    id: elementForeach.id,
+                                    asunto: elementForeach.asunto,
+                                    app: {
+                                        id: elementForeach.app,
+                                        name: appName.app
+                                    },
+                                    imagen: elementForeach.imagen,
+                                    descripcion: elementForeach.descripcion,
+                                    estado: {
+                                        id: elementForeach.estado,
+                                        estado: tStatus.estado
+                                    },
+                                    dates: {
+                                        creacion: elementForeach.created_at,
+                                        ultimaActualizacion: elementForeach.update_at
+                                    }
+                                }
+                                ticketsReturn.push(dataReturn);
+                                contador++;
+                                if(element.length == contador){
+                                    return resolve(ticketsReturn);
+                                }
+                                
+                            }).catch((err) => reject(err));
+                            
+
+                        });
+                        
+                    }).catch((err) => {return reject("Error interno createTicketsList. ERR_01 || " + err)})
+                    break;
+                default:
+                    break;
+            }
+        });
+
     }
 } 
 

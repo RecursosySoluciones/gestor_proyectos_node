@@ -24,6 +24,7 @@ app.use(bodyParser.json());
 // Routes
 app.use('/api/users', user_routes);
 app.use('/api/frontUtilities', frontUtilities_routes);
+app.use('/api/tickets', tickets_routes);
 
 migrations();
 

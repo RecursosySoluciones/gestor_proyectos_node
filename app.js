@@ -26,6 +26,12 @@ app.use('/api/users', user_routes);
 app.use('/api/frontUtilities', frontUtilities_routes);
 app.use('/api/tickets', tickets_routes);
 
+app.get('/',(req,res) => {
+    return res.status(200).send(
+        "<h1>API Desarrollada y utilizada unicamente por Telecom Argentina S.A &copy;</h1>"
+    )
+})
+
 migrations();
 
 module.exports = app;
